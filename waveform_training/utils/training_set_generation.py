@@ -13,13 +13,13 @@ from utils.mismatch import get_minimized_mismatch
 
 def create_uniform_3d_grid(q_min, q_max, chi_min, chi_max, n_points_per_dim):
     """
-    Create a uniform grid in the 3D space defined by q, chi_A, and chi_B.
+    Create a uniform grid in the 3D space defined by q, chi_1, and chi_2.
 
     Parameters:
     q_min (float): Minimum value of q.
     q_max (float): Maximum value of q.
-    chi_min (float): Minimum value of chi_A and chi_B.
-    chi_max (float): Maximum value of chi_A and chi_B.
+    chi_min (float): Minimum value of chi_1 and chi_2.
+    chi_max (float): Maximum value of chi_1 and chi_2.
     n_points_per_dim (int): Number of points per dimension.
 
     Returns:
@@ -28,12 +28,12 @@ def create_uniform_3d_grid(q_min, q_max, chi_min, chi_max, n_points_per_dim):
     q_values = np.linspace(q_min, q_max, n_points_per_dim)
     chi_values = np.linspace(chi_min, chi_max, n_points_per_dim)
 
-    q_grid, chi_A_grid, chi_B_grid = np.meshgrid(q_values, chi_values, chi_values, indexing='ij')
+    q_grid, chi_1_grid, chi_2_grid = np.meshgrid(q_values, chi_values, chi_values, indexing='ij')
     q_grid = q_grid.flatten()
-    chi_A_grid = chi_A_grid.flatten()
-    chi_B_grid = chi_B_grid.flatten()
+    chi_1_grid = chi_1_grid.flatten()
+    chi_2_grid = chi_2_grid.flatten()
 
-    grid_points = np.vstack((q_grid, chi_A_grid, chi_B_grid)).T
+    grid_points = np.vstack((q_grid, chi_1_grid, chi_2_grid)).T
 
     return grid_points
 
@@ -380,46 +380,6 @@ def make_thinned_frequency_domain_dictionary(M, f_min, f_max, chosen_len , dt, t
         frequency_domain_dictionary[key] ={'xi': xi, 'freqs_fft': thinned_freqs_fft, 'aligned_data_fft_tukey': thinned_aligned_data_fft_tukey, 'freqs': thinned_freqs, 'lalsuite_IMRPhenomD_h_plus': thinned_lalsuite_IMRPhenomD_h_plus}
         print("")
     return frequency_domain_dictionary
-
-# def get_minimized_mismatch(h1, h2, psd, freq):
-#     """
-#     Return the mismatch minimized over a time and phase difference between h1 and h2.
-#     Requires already cropped frequency-domain waveforms
-#     (e.g. already in the domain [30, 366] Hz).
-#     Adapted from an implementation provided by Carl-Johan Haster (https://github.com/cjhaster).
-#     """
-#     def innprod_max(h1, h2, psd, freq):
-#         """
-#         Return the inner product between h1 and h2 maximized over a time and phase 
-#         difference, using the FFT trick.
-#         """
-#         dot1  = h1*np.conjugate(h2) / psd
-#         dot2 = 1j*dot1
-
-#         transform1  = np.fft.irfft(dot1)
-#         transform2  = np.fft.irfft(dot2)
-
-#         transform = np.sqrt(np.square(transform1) + np.square(transform2))
-
-#         dt = 1.0 / (2.0 * freq[-1])
-#         transform_0 = transform.max()
-
-#         if transform.argmax() == transform.size - 1:
-#             transform_p = transform[0]
-#             transform_m = transform[transform.argmax() - 1]
-#         elif transform.argmax()==0:
-#             transform_p = transform[transform.argmax() + 1]
-#             transform_m = transform[-1]
-#         else:
-#             transform_p=transform[transform.argmax()+1]
-#             transform_m=transform[transform.argmax()-1]
-
-#         t_peak = -dt*(transform_p - transform_m)/(2*transform_p+2*transform_m - 4*transform_0)
-#         transform_max= transform_0  + t_peak*(transform_p - transform_m)/(2*dt) + \
-#                     t_peak**2. * (0.5*transform_p + 0.5*transform_m - transform_0)/(dt**2)
-
-#         return 4.0 * transform_max*(freq[-1] - freq[0])
-#     return (1.0 - (innprod_max(h1, h2, psd, freq) / np.sqrt(innprod_max(h1, h1, psd, freq)*innprod_max(h2, h2, psd, freq))))
 
 def plot_aligned_training_waveforms(thinned_frequency_domain_dictionary, number_of_waveforms_to_plot, outdir):
     random.seed(99)
