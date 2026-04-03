@@ -45,4 +45,6 @@ project=phenom-distribution-fit
 pathtoscratch=$HOME/scratch/$project/data/raw/
 mkdir -p $pathtoscratch
 
-singularity exec --nv --bind $pathtoscratch,$PWD ../singularity/phenom_distribution_fit_image.sif bash ../scripts/launch_inference.sh "$injection_attempt"
+pathtoscripts="$(realpath ../scripts)"
+
+singularity exec --nv --bind $pathtoscratch,$PWD,$pathtoscripts ../singularity/phenom_distribution_fit_image.sif bash ../scripts/launch_inference.sh "$injection_attempt"
