@@ -6,7 +6,7 @@ This repository contains instructions and scripts to reproduce the waveform cali
 </video>
 
 ## Instructions
-1. From within the repository `phenom-distribution-fit`, create the conda environment `gw-surrogate` to generate the numerical relativity surrogate waveforms `NRHybSur3dq8`
+1. From within the repository `phenom-distribution-fit`, create the conda environment `gw-surrogate` to generate the numerical relativity surrogate waveforms [`NRHybSur3dq8`](https://github.com/sxs-collaboration/gwsurrogate/tree/master)
     ```
     bash conda/create_gwsurrogate.sh
     conda activate gw-surrogate

@@ -13,6 +13,7 @@ __pycache__/
 *.pdf
 *.ipynb
 sampling_animation.py
+!sampling_animation.mp4
 outdir/
 out/
 config.yaml
