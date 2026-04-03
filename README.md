@@ -1,7 +1,7 @@
 # phenom-distribution-fit
 This repository contains instructions and scripts to reproduce the waveform calibration described in [_Uncertainty-aware waveform modeling for high signal-to-noise ratio gravitational-wave inference_](https://arxiv.org/abs/2503.23304). It uses the Python libraries [`ripplegw`](https://github.com/tedwards2412/ripple) (waveform generation) and [`flowMC`](https://github.com/kazewong/flowMC) (Bayesian inference assisted by normalizing flow). Both are accelerated on GPU with [`jax`](https://github.com/jax-ml/jax).
 
-<video src="sampling_animation.mp4" controls></video>
+<video src="https://github.com/mezzasoma/phenom-distribution-fit/blob/main/sampling_animation.mp4" controls></video>
 
 ## Instructions
 1. From within the repository `phenom-distribution-fit`, create the conda environment `gw-surrogate` to generate the numerical relativity surrogate waveforms [`NRHybSur3dq8`](https://github.com/sxs-collaboration/gwsurrogate/tree/master)
