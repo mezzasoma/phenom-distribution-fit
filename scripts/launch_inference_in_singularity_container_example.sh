@@ -9,7 +9,7 @@
 #SBATCH --cpus-per-task=16
 #SBATCH --gpus-per-node=1
 #SBATCH --gpu-bind=closest
-#SBATCH -t 05:00:00
+#SBATCH -t 07:00:00
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=
 #SBATCH --partition=
