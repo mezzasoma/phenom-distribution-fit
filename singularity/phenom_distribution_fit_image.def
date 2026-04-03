@@ -1,0 +1,51 @@
+Bootstrap: docker
+From: continuumio/anaconda3:latest
+
+%files
+    ./conda/environment_phenom_distribution_fit.yml /opt/conda/environment_phenom_distribution_fit.yml
+    ../ripple-phenom-distribution-fit-temp /opt/ripple-phenom-distribution-fit-temp
+
+%environment
+    export LC_ALL=C
+
+%post
+    apt-get -y update
+    apt-get -y install lsb-release
+    apt-get -y install gcc
+    apt-get install -y python3
+    conda env create -f /opt/conda/environment_phenom_distribution_fit.yml
+    . /opt/conda/etc/profile.d/conda.sh
+    conda activate phenom-distribution-fit
+    cd /opt/ripple-phenom-distribution-fit-temp
+    pip3 install --force-reinstall --ignore-installed --no-cache-dir .
+    conda install -y cuda-nvcc=12.3.52=0 -c conda-forge -c nvidia
+
+%runscript
+
+%startscript
+
+%test
+
+%labels
+
+%help
+    This Singularity container provides the software needed to run
+    the inference with flowMC on an NVIDIA GPU, independently of the
+    NVIDIA libraries installed on the compute node.
+    It includes a nested conda environment named:
+
+        phenom-distribution-fit
+
+    within which the Python scripts are run.
+
+    -----
+    Build the container with:
+
+        sudo singularity build singularity/phenom_distribution_fit_image.sif \
+            singularity/phenom_distribution_fit_image.def
+
+    Notes:
+    - Building requires root privileges.
+    - The build may temporarily use up to 17 GB under root.
+    - This temporary space is released after the image is created.
+    - The final .sif image is around 4.2 GB.
