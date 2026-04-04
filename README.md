@@ -25,7 +25,7 @@ Build the container with
     ```
     sudo singularity build singularity/phenom_distribution_fit_image.sif singularity/phenom_distribution_fit_image.def
     ```
-    This requires root privileges and it can temporarily use up to ~17GB of disk space under root. This space is realease once the container is created. The final .sif image is ~4.2GB.
+    This requires root privileges and it can temporarily use up to ~17GB of disk space under root. This space is released after the container is created. The final .sif image is ~4.2GB.
 
 4. Remove temporary installation files
     ```
