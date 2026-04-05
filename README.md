@@ -44,7 +44,7 @@ and then rename the file to `scripts/launch_inference_in_singularity_container.s
 
 6. For the waveform training set considered here (~40MB), it is preferable to split the inference into multiple segments to avoid exhausting the GPU memory. Each segment is labeled by an integer `injection_attempt`, starting from 0. At the start of each segment, a linear parameter transformation is computed to decorrelate the parameters and improve sampling convergence.
 
-    - 6.1 Compue the parameter transformation for `injection_attempt=0`
+    - 6.1 Compute the parameter transformation for `injection_attempt=0`
         ```
         cd waveform_training
         conda activate phenom-distribution-fit
