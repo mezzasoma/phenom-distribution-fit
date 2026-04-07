@@ -15,7 +15,7 @@ import os
 def parse_args():
     parser = argparse.ArgumentParser(
         description=(
-            "Inspect inference run and save the mean of the last 100 training samples."
+            "Inspect inferred samples of given run."
         )
     )
     parser.add_argument(

@@ -74,6 +74,12 @@ and then rename the file to `scripts/launch_inference_in_singularity_container.s
         ```
     Repeat steps 6.4 and 6.5 for `injection_attempt=2,3,4,...` until convergence is achieved (saturation of the log likelihood values, Gelman-Rubin statistic less than 1.05, good chain mixing). In practice, run through at least `injection_attempt=2`.
 
+7. Let `flowmc-TTTTGGZZXXPPFF` denote the converged run. If the distribution of the samples is well approximated by a multivariate Gaussian, it can be easily used as a prior for a subsequent gravitational-wave inference with [`bilby`](https://github.com/bilby-dev/bilby). To create a multivariate Gaussian prior from the samples, run
+    ```
+    python bilby_prior.py /path/to/run/flowmc-TTTTGGZZXXPPFF
+    ```
+    This saves a `.prior` file whose content can be appended to an existing binary black hole `.prior` file, which can then be [loaded into `bilby`](https://bilby-dev.github.io/bilby/api/bilby.gw.prior.BBHPriorDict.html#bilby.gw.prior.BBHPriorDict.from_file).
+
 ## Software and hardware requirements
 
 This project was developed and tested with:

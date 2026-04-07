@@ -6,6 +6,7 @@ import jax.numpy as jnp
 # or may not have enough memory.
 jax.config.update("jax_platforms", "cpu")
 # ------------------------------------------------------------------
+jax.config.update("jax_enable_x64", True)
 import pickle
 import numpy as np
 import os
@@ -191,7 +192,7 @@ def save_plot_corner_with_reference_no_ticks(path_to_run, outdir, selected_indic
 
 def save_plot_log_likelihood_along_train_chains(path_to_run, outdir, log_likelihood_function, data):
     """
-    Evaluate and plot log likelihood values along selected thinned training chains.
+    Evaluate and plot log likelihood values along two thinned training chains.
     """
     run_label = os.path.basename(os.path.normpath(path_to_run))
     original_chains_train = get_original_chains_train(path_to_run)
@@ -223,6 +224,67 @@ def save_plot_log_likelihood_along_train_chains(path_to_run, outdir, log_likelih
     plt.gcf().set_size_inches(6, 4)
 
     save_path = os.path.join(outdir, run_label + '_loglikelihood_along_train_chain.png')
+    plt.savefig(save_path, dpi=250, bbox_inches='tight')
+    plt.close()
+    return None
+
+def save_bilby_gaussian_prior_appendix(path_to_run, outdir):
+    """
+    Save bilby multivariate Gaussian prior appendix file. Mean and covariance matrix
+    computed from production samples of given run.
+    """
+    run_label = os.path.basename(os.path.normpath(path_to_run))
+    original_chains_production = get_original_chains_production(path_to_run)
+    n_dim = original_chains_production.shape[-1]
+    production_samples_flattened = original_chains_production.reshape(-1, n_dim)
+    production_mean = np.mean(production_samples_flattened, axis=0, dtype=np.float64)
+    production_covariance_matrix = np.cov(production_samples_flattened, rowvar=False, dtype=np.float64)
+
+    parameter_names = [f'lambda_sigma_{i}' for i in range(n_dim)]
+    prior_content = (
+        f"mvg = bilby.core.prior.MultivariateGaussianDist(names={parameter_names}, mus={production_mean.tolist()}, covs={production_covariance_matrix.tolist()})\n"
+    )
+    for name in parameter_names:
+        prior_content += f"{name} = bilby.core.prior.MultivariateGaussian(dist=mvg, name='{name}')\n"
+
+    save_path = os.path.join(outdir, run_label + '_gaussian_prior_appendix.prior')
+    with open(save_path, 'w') as f:
+        f.write(prior_content)
+
+    std_dev = np.sqrt(np.diag(production_covariance_matrix))
+    print(f"{'Parameter number':^15} {'Mean':^23} {'Standard deviation':^23}")
+    for i in range(1, n_dim+1):
+        print(f"{i:^15} {production_mean[i-1]:^23.15e} {std_dev[i-1]:^23.15e}")
+    return None
+
+def save_plot_correlation_matrix(path_to_run, outdir):
+    """
+    Save plot of correlation matrix (absolute value), obtained from
+    the production samples of given run.
+    """
+    run_label = os.path.basename(os.path.normpath(path_to_run))
+    original_chains_production = get_original_chains_production(path_to_run)
+    n_dim = original_chains_production.shape[-1]
+    production_samples_flattened = original_chains_production.reshape(-1, n_dim)
+
+    production_correlation_matrix = np.corrcoef(production_samples_flattened, rowvar=False, dtype=np.float64)
+    mask = np.triu(np.ones_like(production_correlation_matrix, dtype=bool), k=1)
+    corr_lower = np.ma.masked_where(mask, np.abs(production_correlation_matrix))
+    plt.figure(figsize=(8, 6))
+    plt.imshow(corr_lower, cmap='inferno_r', vmin=0, vmax=1)
+    plt.colorbar(label="Absolute value of correlation")
+    plt.xlabel("Parameter index")
+    plt.ylabel("Parameter index")
+    plt.title("Absolute value of the correlation matrix")
+    ticks = np.arange(1, n_dim + 1, 2)
+    plt.xticks(ticks - 1, ticks)
+    plt.yticks(ticks - 1, ticks)
+    ax = plt.gca()
+    ax.set_xticks(np.arange(-0.5, n_dim, 1), minor=True)
+    ax.set_yticks(np.arange(-0.5, n_dim, 1), minor=True)
+    ax.grid(which="minor", color="white", linewidth=0.4)
+    ax.tick_params(which="minor", bottom=False, left=False)
+    save_path = os.path.join(outdir, run_label + '_correlation.png')
     plt.savefig(save_path, dpi=250, bbox_inches='tight')
     plt.close()
     return None
